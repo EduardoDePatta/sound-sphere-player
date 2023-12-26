@@ -21,21 +21,19 @@ interface AuthInputFieldProps {
   containerStyle?: StyleProp<ViewStyle>
 }
 
-const AuthInputField: FC<AuthInputFieldProps> = (props) => {
+const AuthInputField: FC<AuthInputFieldProps> = ({
+  label,
+  name,
+  placeholder,
+  keyboardType,
+  autoCapitalize,
+  secureTextEntry,
+  containerStyle,
+}) => {
   const { handleChange, values, errors, handleBlur, touched } =
     useFormikContext<{
       [key: string]: string
     }>()
-
-  const {
-    label,
-    name,
-    placeholder,
-    keyboardType,
-    autoCapitalize,
-    secureTextEntry,
-    containerStyle,
-  } = props
 
   const errorMessage = touched[name] && errors[name] ? errors[name] : ''
 
