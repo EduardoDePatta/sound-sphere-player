@@ -1,5 +1,6 @@
-import { FC, useEffect } from 'react'
+import { FC, ReactNode } from 'react'
 import {
+  Pressable,
   StyleProp,
   StyleSheet,
   Text,
@@ -19,6 +20,8 @@ interface AuthInputFieldProps {
   autoCapitalize?: TextInputProps['autoCapitalize']
   secureTextEntry?: TextInputProps['secureTextEntry']
   containerStyle?: StyleProp<ViewStyle>
+  rightIcon?: ReactNode
+  onRightIconPress?: () => void
 }
 
 const AuthInputField: FC<AuthInputFieldProps> = ({
@@ -29,6 +32,8 @@ const AuthInputField: FC<AuthInputFieldProps> = ({
   autoCapitalize,
   secureTextEntry,
   containerStyle,
+  rightIcon,
+  onRightIconPress,
 }) => {
   const { handleChange, values, errors, handleBlur, touched } =
     useFormikContext<{
@@ -43,15 +48,22 @@ const AuthInputField: FC<AuthInputFieldProps> = ({
         <Text style={styles.label}>{label}</Text>
         <Text style={styles.errorMessage}>{errorMessage}</Text>
       </View>
-      <AppInput
-        placeholder={placeholder}
-        keyboardType={keyboardType}
-        autoCapitalize={autoCapitalize}
-        secureTextEntry={secureTextEntry}
-        onChangeText={handleChange(name)}
-        value={values[name]}
-        onBlur={handleBlur(name)}
-      />
+      <View>
+        <AppInput
+          placeholder={placeholder}
+          keyboardType={keyboardType}
+          autoCapitalize={autoCapitalize}
+          secureTextEntry={secureTextEntry}
+          onChangeText={handleChange(name)}
+          value={values[name]}
+          onBlur={handleBlur(name)}
+        />
+        {rightIcon ? (
+          <Pressable onPress={onRightIconPress} style={styles.rightIcon}>
+            {rightIcon}
+          </Pressable>
+        ) : null}
+      </View>
     </View>
   )
 }
@@ -69,6 +81,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 5,
+  },
+  rightIcon: {
+    width: 45,
+    height: 45,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })
 
