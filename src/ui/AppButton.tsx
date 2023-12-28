@@ -1,17 +1,31 @@
 import { FC } from 'react'
 import { Pressable, StyleSheet, Text } from 'react-native'
-import colors from '../constants/colors'
 import Spinner from 'react-native-loading-spinner-overlay'
+import colors from '../constants/colors'
 
 interface AppButtonProps {
   title: string
   loading?: boolean
   onPress?: () => void
+  borderRadius?: number
 }
 
-const AppButton: FC<AppButtonProps> = ({ title, onPress, loading = false }) => {
+const AppButton: FC<AppButtonProps> = ({
+  title,
+  onPress,
+  loading = false,
+  borderRadius,
+}) => {
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.container,
+        {
+          borderRadius: borderRadius ?? 15,
+        },
+      ]}
+    >
       <Text style={styles.title}>{title}</Text>
       <Spinner
         visible={loading}
@@ -29,7 +43,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.SECONDARY,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 15,
   },
   title: {
     color: colors.CONTRAST,
