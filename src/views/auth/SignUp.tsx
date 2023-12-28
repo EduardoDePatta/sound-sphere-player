@@ -1,12 +1,12 @@
 import { FC, useState } from 'react'
-import { SafeAreaView, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import AuthInputField from '../../components/form/AuthInputField'
 import * as yup from 'yup'
 import Form from '../../components/form'
 import SubmitButton from '../../components/form/SubmitBtn'
 import PasswordVisibilityIcon from '../../ui/PasswordVisibilityIcon'
 import AppLink from '../../ui/AppLink'
-import CirclesBackground from '../../components/background/CirclesBackground'
+import AuthFormContainer from '../../components/containers/AuthFormContainer'
 
 const initialValue = {
   name: '',
@@ -40,14 +40,16 @@ const SignUp: FC = () => {
   const [secureEntry, setSecureEntry] = useState(true)
 
   return (
-    <SafeAreaView style={styles.container}>
-      <CirclesBackground />
-      <Form
-        initialValues={initialValue}
-        validationSchema={signUpSchema}
-        onSubmit={(values) => {
-          console.log(values)
-        }}
+    <Form
+      initialValues={initialValue}
+      validationSchema={signUpSchema}
+      onSubmit={(values) => {
+        console.log(values)
+      }}
+    >
+      <AuthFormContainer
+        heading='Welcome!'
+        subHeading="Let's get started by creating your account."
       >
         <View style={styles.formContainer}>
           <AuthInputField
@@ -80,8 +82,8 @@ const SignUp: FC = () => {
             <AppLink title='Sign In' />
           </View>
         </View>
-      </Form>
-    </SafeAreaView>
+      </AuthFormContainer>
+    </Form>
   )
 }
 
