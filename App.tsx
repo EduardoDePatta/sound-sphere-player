@@ -1,11 +1,14 @@
 import { Provider } from 'react-redux'
 import store from './src/store'
 import AppNavigator from './src/navigation'
+import AppContainer from './src/components/containers/AppContainer'
 
-const App = () => {
+function App() {
   return (
     <Provider store={store}>
-      <AppNavigator />
+      <AppContainer>
+        <AppNavigator />
+      </AppContainer>
     </Provider>
   )
 }

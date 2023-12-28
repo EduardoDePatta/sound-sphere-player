@@ -6,13 +6,11 @@ interface AppInputProps extends TextInputProps {}
 
 const AppInput: FC<AppInputProps> = (props) => {
   return (
-    <>
-      <TextInput
-        {...props}
-        placeholderTextColor={colors.CONTRAST}
-        style={styles.input}
-      />
-    </>
+    <TextInput
+      {...props}
+      placeholderTextColor={colors.CONTRAST}
+      style={styles.input}
+    />
   )
 }
 

@@ -1,13 +1,13 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { FC, useEffect, useRef, useState } from 'react'
 import { Keyboard, StyleSheet, Text, TextInput, View } from 'react-native'
 import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
 import OTPField from '../../ui/OTPField'
 import AppButton from '../../ui/AppButton'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AuthStackParamList } from '../../@types/navigation'
 import client from '../../api/client'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import colors from '../../constants/colors'
 
 type VerificationProps = NativeStackScreenProps<
@@ -138,9 +138,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
-  },
-  marginBottom: {
     marginBottom: 20,
   },
   formContainer: {
