@@ -1,11 +1,12 @@
 import { FC, useState } from 'react'
 import { SafeAreaView, StyleSheet, View } from 'react-native'
-import colors from '../../constants/colors'
 import AuthInputField from '../../components/form/AuthInputField'
 import * as yup from 'yup'
 import Form from '../../components/form'
 import SubmitButton from '../../components/form/SubmitBtn'
 import PasswordVisibilityIcon from '../../ui/PasswordVisibilityIcon'
+import AppLink from '../../ui/AppLink'
+import CirclesBackground from '../../components/background/CirclesBackground'
 
 const initialValue = {
   name: '',
@@ -40,6 +41,7 @@ const SignUp: FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <CirclesBackground />
       <Form
         initialValues={initialValue}
         validationSchema={signUpSchema}
@@ -72,7 +74,11 @@ const SignUp: FC = () => {
             rightIcon={<PasswordVisibilityIcon privateIcon={secureEntry} />}
             onRightIconPress={() => setSecureEntry(!secureEntry)}
           />
-          <SubmitButton title='Sigsn up' />
+          <SubmitButton title='Sign up' />
+          <View style={styles.linkContainer}>
+            <AppLink title='I Lost My Password' />
+            <AppLink title='Sign In' />
+          </View>
         </View>
       </Form>
     </SafeAreaView>
@@ -82,7 +88,7 @@ const SignUp: FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.PRIMARY,
+    backgroundColor: '#1e2838',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 15,
@@ -92,6 +98,12 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: '100%',
+  },
+  linkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
   },
 })
 
