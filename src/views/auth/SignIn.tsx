@@ -37,6 +37,7 @@ const signInSchema = yup.object({
 
 const SignIn: FC = () => {
   const [secureEntry, setSecureEntry] = useState(true)
+  const [loading, setLoading] = useState(false)
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
 
   const handleSubmit = async (
@@ -44,10 +45,12 @@ const SignIn: FC = () => {
     actions: FormikHelpers<SignInUserInfo>
   ) => {
     try {
+      setLoading(true)
       const { data } = await client.post('/auth/sign-in', { ...values })
-      console.log('🚀 ~ file: SignIn.tsx:48 ~ data:', data)
     } catch (error) {
       console.log('bla bla: ', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -77,7 +80,7 @@ const SignIn: FC = () => {
             rightIcon={<PasswordVisibilityIcon privateIcon={secureEntry} />}
             onRightIconPress={() => setSecureEntry(!secureEntry)}
           />
-          <SubmitButton title='Sign In' />
+          <SubmitButton loading={loading} title='Sign In' />
           <View style={styles.linkContainer}>
             <AppLink
               title='I Lost My Password'

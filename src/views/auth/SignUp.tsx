@@ -50,6 +50,7 @@ const signUpSchema = yup.object({
 
 const SignUp: FC = () => {
   const [secureEntry, setSecureEntry] = useState(true)
+  const [loading, setLoading] = useState(false)
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
 
   const handleSubmit = async (
@@ -57,10 +58,13 @@ const SignUp: FC = () => {
     actions: FormikHelpers<NewUser>
   ) => {
     try {
+      setLoading(true)
       const { data } = await client.post('/auth/create', { ...values })
       navigation.navigate('Verification', { userInfo: data.user })
     } catch (error) {
       console.log('bla bla: ', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -99,7 +103,7 @@ const SignUp: FC = () => {
             rightIcon={<PasswordVisibilityIcon privateIcon={secureEntry} />}
             onRightIconPress={() => setSecureEntry(!secureEntry)}
           />
-          <SubmitButton title='Sign up' />
+          <SubmitButton loading={loading} title='Sign up' />
           <View style={styles.linkContainer}>
             <AppLink
               title='I Lost My Password'

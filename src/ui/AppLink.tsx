@@ -5,11 +5,15 @@ import colors from '../constants/colors'
 interface AppLinkProps {
   title: string
   onPress?: () => void
+  active?: boolean
 }
 
-const AppLink: FC<AppLinkProps> = ({ title, onPress }) => {
+const AppLink: FC<AppLinkProps> = ({ title, onPress, active = true }) => {
   return (
-    <Pressable onPress={onPress}>
+    <Pressable
+      onPress={active ? onPress : null}
+      style={{ opacity: active ? 1 : 0 }}
+    >
       <Text style={styles.title}>{title}</Text>
     </Pressable>
   )

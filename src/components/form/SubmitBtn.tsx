@@ -5,12 +5,18 @@ import AppButton from '../../ui/AppButton'
 
 interface SubmitBtnProps {
   title: string
+  loading?: boolean
 }
 
-const SubmitButton: FC<SubmitBtnProps> = (props) => {
-  const { title } = props
+const SubmitButton: FC<SubmitBtnProps> = ({ title, loading = false }) => {
   const { handleSubmit } = useFormikContext()
-  return <AppButton title={title} onPress={handleSubmit as () => void} />
+  return (
+    <AppButton
+      loading={loading}
+      title={title}
+      onPress={handleSubmit as () => void}
+    />
+  )
 }
 
 const styles = StyleSheet.create({

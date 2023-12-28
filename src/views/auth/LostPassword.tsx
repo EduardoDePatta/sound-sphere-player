@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import AuthInputField from '../../components/form/AuthInputField'
 import * as yup from 'yup'
@@ -23,6 +23,7 @@ const lostPasswordSchema = yup.object({
 
 const LostPassword: FC = () => {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
+  const [loading, setLoading] = useState(false)
 
   return (
     <Form
@@ -45,7 +46,7 @@ const LostPassword: FC = () => {
             autoCapitalize='none'
             containerStyle={styles.marginBottom}
           />
-          <SubmitButton title='Send Link' />
+          <SubmitButton loading={loading} title='Send Link' />
           <View style={styles.linkContainer}>
             <AppLink
               title='Sign In'
