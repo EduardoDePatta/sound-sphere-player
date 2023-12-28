@@ -1,12 +1,11 @@
-import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar'
-import SignUp from './src/views/auth/SignUp'
+import { NavigationContainer } from '@react-navigation/native'
+import AuthNavigator from './src/navigation/AuthNavigator'
 
 const App = () => {
   return (
-    <>
-      <SignUp />
-      <ExpoStatusBar hidden />
-    </>
+    <NavigationContainer>
+      <AuthNavigator />
+    </NavigationContainer>
   )
 }
 export default App
