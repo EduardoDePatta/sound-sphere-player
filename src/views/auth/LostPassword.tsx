@@ -8,6 +8,12 @@ import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { AuthStackParamList } from '../../@types/navigation'
+import { FormikHelpers } from 'formik'
+import client from '../../api/client'
+
+interface InitialValue {
+  email: string
+}
 
 const initialValue = {
   email: '',
@@ -25,13 +31,29 @@ const LostPassword: FC = () => {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
   const [loading, setLoading] = useState(false)
 
+  const handleSubmit = (
+    values: InitialValue,
+    actions: FormikHelpers<InitialValue>
+  ) => {
+    try {
+      setLoading(true)
+      console.log(loading)
+      client.post('/auth/forget-password', {
+        ...values,
+      })
+      console.log('deu certo?')
+    } catch (error) {
+      console.log('eeeeeeeeeeerrrorrrr: ', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <Form
       initialValues={initialValue}
       validationSchema={lostPasswordSchema}
-      onSubmit={(values) => {
-        console.log(values)
-      }}
+      onSubmit={handleSubmit}
     >
       <AuthFormContainer
         heading='Forget Password?'
