@@ -13,7 +13,7 @@ const initialValue = {
   password: '',
 }
 
-const signUpSchema = yup.object({
+const signInSchema = yup.object({
   email: yup
     .string()
     .trim('Email is missing!')
@@ -32,7 +32,7 @@ const SignIn: FC = () => {
   return (
     <Form
       initialValues={initialValue}
-      validationSchema={signUpSchema}
+      validationSchema={signInSchema}
       onSubmit={(values) => {
         console.log(values)
       }}
