@@ -8,7 +8,7 @@ interface FormProps<T> {
   children: ReactNode
 }
 
-const Form = <T extends Object>(props: FormProps<T>) => {
+function Form<T extends Object>(props: FormProps<T>) {
   const { initialValues, validationSchema, onSubmit, children } = props
   return (
     <Formik

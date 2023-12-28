@@ -1,18 +1,17 @@
-import { FC, useState } from 'react'
+import { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import AuthInputField from '../../components/form/AuthInputField'
 import * as yup from 'yup'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { useDispatch } from 'react-redux'
+import AuthInputField from '../../components/form/AuthInputField'
 import Form from '../../components/form'
 import SubmitButton from '../../components/form/SubmitBtn'
 import PasswordVisibilityIcon from '../../ui/PasswordVisibilityIcon'
 import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { AuthStackParamList } from '../../@types/navigation'
-import { FormikHelpers } from 'formik'
 import client from '../../api/client'
 import { updateLoggedInState, updateProfile } from '../../store/auth'
-import { useDispatch } from 'react-redux'
 import { Keys, saveToAsyncStorage } from '../../storage/asyncStorage'
 
 interface SignInUserInfo {
@@ -38,7 +37,7 @@ const signInSchema = yup.object({
     .required('Email is required!'),
 })
 
-const SignIn: FC = () => {
+function SignIn() {
   const [secureEntry, setSecureEntry] = useState(true)
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>()

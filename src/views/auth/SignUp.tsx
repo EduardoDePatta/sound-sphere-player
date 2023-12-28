@@ -1,17 +1,15 @@
+import * as yup from 'yup'
 import { FC, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { FormikHelpers } from 'formik'
 import AuthInputField from '../../components/form/AuthInputField'
-import * as yup from 'yup'
 import Form from '../../components/form'
 import SubmitButton from '../../components/form/SubmitBtn'
 import PasswordVisibilityIcon from '../../ui/PasswordVisibilityIcon'
 import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { AuthStackParamList } from '../../@types/navigation'
-import { FormikHelpers } from 'formik'
-import axios from 'axios'
-import baseUrl from '../../constants/baseUrl'
 import client from '../../api/client'
 
 interface NewUser {
@@ -125,13 +123,6 @@ const SignUp: FC = () => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1e2838',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 15,
-  },
   marginBottom: {
     marginBottom: 20,
   },
