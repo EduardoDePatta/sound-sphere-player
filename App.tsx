@@ -1,11 +1,12 @@
-import { NavigationContainer } from '@react-navigation/native'
-import AuthNavigator from './src/navigation/AuthNavigator'
+import { Provider } from 'react-redux'
+import store from './src/store'
+import AppNavigator from './src/navigation'
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <AuthNavigator />
-    </NavigationContainer>
+    <Provider store={store}>
+      <AppNavigator />
+    </Provider>
   )
 }
 export default App

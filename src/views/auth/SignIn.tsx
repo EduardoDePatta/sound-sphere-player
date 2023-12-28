@@ -11,6 +11,9 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { AuthStackParamList } from '../../@types/navigation'
 import { FormikHelpers } from 'formik'
 import client from '../../api/client'
+import { updateLoggedInState, updateProfile } from '../../store/auth'
+import { useDispatch } from 'react-redux'
+import { Keys, saveToAsyncStorage } from '../../storage/asyncStorage'
 
 interface SignInUserInfo {
   email: string
@@ -39,14 +42,15 @@ const SignIn: FC = () => {
   const [secureEntry, setSecureEntry] = useState(true)
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
+  const dispatch = useDispatch()
 
-  const handleSubmit = async (
-    values: SignInUserInfo,
-    actions: FormikHelpers<SignInUserInfo>
-  ) => {
+  const handleSubmit = async (values: SignInUserInfo) => {
     try {
       setLoading(true)
       const { data } = await client.post('/auth/sign-in', { ...values })
+      await saveToAsyncStorage(Keys.AUTH_TOKEN, data.token)
+      dispatch(updateProfile(data.profile))
+      dispatch(updateLoggedInState(true))
     } catch (error) {
       console.log('bla bla: ', error)
     } finally {
