@@ -9,7 +9,7 @@ const AppInput: FC<AppInputProps> = (props) => {
     <>
       <TextInput
         {...props}
-        placeholderTextColor={colors.INACTIVE_CONTRAST}
+        placeholderTextColor={colors.CONTRAST}
         style={styles.input}
       />
     </>
@@ -19,7 +19,7 @@ const AppInput: FC<AppInputProps> = (props) => {
 const styles = StyleSheet.create({
   input: {
     borderWidth: 2,
-    borderColor: colors.SECONDARY,
+    borderColor: colors.CONTRAST_2,
     height: 45,
     borderRadius: 15,
     paddingLeft: 15,
