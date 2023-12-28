@@ -1,14 +1,13 @@
 import { FC, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import AuthInputField from '../../components/form/AuthInputField'
 import * as yup from 'yup'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+import AuthInputField from '../../components/form/AuthInputField'
 import Form from '../../components/form'
 import SubmitButton from '../../components/form/SubmitBtn'
 import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { AuthStackParamList } from '../../@types/navigation'
-import { FormikHelpers } from 'formik'
 import client from '../../api/client'
 
 interface InitialValue {
@@ -31,10 +30,7 @@ const LostPassword: FC = () => {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (
-    values: InitialValue,
-    actions: FormikHelpers<InitialValue>
-  ) => {
+  const handleSubmit = (values: InitialValue) => {
     try {
       setLoading(true)
       console.log(loading)
