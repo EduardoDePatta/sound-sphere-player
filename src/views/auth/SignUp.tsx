@@ -7,8 +7,20 @@ import SubmitButton from '../../components/form/SubmitBtn'
 import PasswordVisibilityIcon from '../../ui/PasswordVisibilityIcon'
 import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { AuthStackParamList } from '../../@types/navigation'
+import { FormikHelpers } from 'formik'
+import axios from 'axios'
+import baseUrl from '../../constants/baseUrl'
+import client from '../../api/client'
 
-const initialValue = {
+interface NewUser {
+  name: string
+  email: string
+  password: string
+}
+
+const initialValue: NewUser = {
   name: '',
   email: '',
   password: '',
@@ -38,14 +50,25 @@ const signUpSchema = yup.object({
 
 const SignUp: FC = () => {
   const [secureEntry, setSecureEntry] = useState(true)
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
+
+  const handleSubmit = async (
+    values: NewUser,
+    actions: FormikHelpers<NewUser>
+  ) => {
+    try {
+      const { data } = await client.post('/auth/create', { ...values })
+      navigation.navigate('Verification', { userInfo: data.user })
+    } catch (error) {
+      console.log('bla bla: ', error)
+    }
+  }
 
   return (
     <Form
       initialValues={initialValue}
       validationSchema={signUpSchema}
-      onSubmit={(values) => {
-        console.log(values)
-      }}
+      onSubmit={handleSubmit}
     >
       <AuthFormContainer
         heading='Welcome!'
@@ -78,8 +101,18 @@ const SignUp: FC = () => {
           />
           <SubmitButton title='Sign up' />
           <View style={styles.linkContainer}>
-            <AppLink title='I Lost My Password' />
-            <AppLink title='Sign In' />
+            <AppLink
+              title='I Lost My Password'
+              onPress={() => {
+                navigation.navigate('LostPassword')
+              }}
+            />
+            <AppLink
+              title='Sign In'
+              onPress={() => {
+                navigation.navigate('SignIn')
+              }}
+            />
           </View>
         </View>
       </AuthFormContainer>

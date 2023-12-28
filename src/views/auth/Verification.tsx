@@ -4,13 +4,24 @@ import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
 import OTPField from '../../ui/OTPField'
 import AppButton from '../../ui/AppButton'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { AuthStackParamList } from '../../@types/navigation'
+import client from '../../api/client'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+
+type VerificationProps = NativeStackScreenProps<
+  AuthStackParamList,
+  'Verification'
+>
 
 const otpFields = new Array(6).fill('')
 
-const Verification: FC = () => {
+const Verification: FC<VerificationProps> = ({ route }) => {
+  const { userInfo } = route.params
   const [otp, setOtp] = useState([...otpFields])
   const [activeOtpIndex, setActiveOtpIndex] = useState(0)
   const inputRef = useRef<TextInput>(null)
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
 
   const handleChange = (value: string, index: number) => {
     const newOtp = [...otp]
@@ -30,6 +41,23 @@ const Verification: FC = () => {
       Keyboard.dismiss()
       const newOtp = value.split('')
       setOtp([...newOtp])
+    }
+  }
+
+  const isValidOtp = otp.every((value) => {
+    return value.trim()
+  })
+
+  const handleSubmit = async () => {
+    if (!isValidOtp) return
+    try {
+      const { data } = await client.post('/auth/verify-email', {
+        userId: userInfo._id,
+        token: otp.join(''),
+      })
+      navigation.navigate('SignIn')
+    } catch (error) {
+      console.log('verification error: ', error)
     }
   }
 
@@ -56,7 +84,7 @@ const Verification: FC = () => {
           )
         })}
       </View>
-      <AppButton title='Submit' />
+      <AppButton title='Submit' onPress={handleSubmit} />
       <View style={styles.linkContainer}>
         <AppLink title='Re-send OTP' />
       </View>
