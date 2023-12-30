@@ -17,6 +17,10 @@ import { DocumentPickerAsset } from 'expo-document-picker'
 import * as yup from 'yup'
 import client from '../api/client'
 import { Keys, getFromAsyncStorage } from '../storage/asyncStorage'
+import Progress from '../ui/Progress'
+import { mapRange } from '../utils/math'
+import Toast from 'react-native-toast-message'
+import { Notification } from '../utils/notification'
 
 interface FormFields {
   title: string
@@ -30,6 +34,8 @@ const defaultForm: FormFields = {
   title: '',
   category: '',
   about: '',
+  file: undefined,
+  poster: undefined,
 }
 
 const audioInfoSchema = yup.object().shape({
@@ -55,9 +61,12 @@ interface UploadProps {}
 const Upload: FC<UploadProps> = (props) => {
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const [audioInfo, setAudioInfo] = useState({ ...defaultForm })
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   const handleUpload = async () => {
     try {
+      setLoading(true)
       const finalData = await audioInfoSchema.validate(audioInfo)
       const formData = new FormData()
       formData.append('title', finalData.title)
@@ -82,14 +91,31 @@ const Upload: FC<UploadProps> = (props) => {
           Authorization: 'Bearer ' + token,
           'Content-Type': 'multipart/form-data',
         },
+        onUploadProgress(progressEvent) {
+          const uploaded = mapRange({
+            inputMin: 0,
+            inputMax: progressEvent.total ?? 0,
+            outputMin: 0,
+            outputMax: 100,
+            inputValue: progressEvent.loaded,
+          })
+
+          if (uploaded >= 100) {
+            setAudioInfo({ ...defaultForm })
+            setLoading(false)
+            Notification.success('Audio file uploaded successfully!')
+          }
+          setUploadProgress(Math.floor(uploaded))
+        },
       })
-      console.log(data)
     } catch (error) {
       if (error instanceof yup.ValidationError) {
-        console.log('validation error: ', error.message)
+        Notification.error(error.message)
       } else {
-        console.log(error)
+        Notification.error(error as string)
       }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -127,6 +153,7 @@ const Upload: FC<UploadProps> = (props) => {
           placeholderTextColor={colors.INACTIVE_CONTRAST}
           placeholder='Title'
           style={styles.input}
+          value={audioInfo.title}
           onChangeText={(text) => {
             setAudioInfo({ ...audioInfo, title: text })
           }}
@@ -143,6 +170,7 @@ const Upload: FC<UploadProps> = (props) => {
           placeholderTextColor={colors.INACTIVE_CONTRAST}
           placeholder='About'
           style={styles.input}
+          value={audioInfo.about}
           multiline
           onChangeText={(text) => {
             setAudioInfo({ ...audioInfo, about: text })
@@ -162,8 +190,15 @@ const Upload: FC<UploadProps> = (props) => {
             setAudioInfo({ ...audioInfo, category: item })
           }}
         />
-        <View style={{ marginBottom: 20 }} />
-        <AppButton title='Submit' borderRadius={7} onPress={handleUpload} />
+        <View style={{ marginVertical: 20 }}>
+          {loading ? <Progress progress={uploadProgress} /> : null}
+        </View>
+        <AppButton
+          loading={loading}
+          title='Submit'
+          borderRadius={7}
+          onPress={handleUpload}
+        />
       </View>
     </ScrollView>
   )

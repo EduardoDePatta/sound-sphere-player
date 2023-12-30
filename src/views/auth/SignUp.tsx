@@ -11,6 +11,9 @@ import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
 import { AuthStackParamList } from '../../@types/navigation'
 import client from '../../api/client'
+import { Notification } from '../../utils/notification'
+import { isAxiosError } from 'axios'
+import catchAsyncError from '../../api/catchError'
 
 interface NewUser {
   name: string
@@ -51,16 +54,15 @@ const SignUp: FC = () => {
   const [loading, setLoading] = useState(false)
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
 
-  const handleSubmit = async (
-    values: NewUser,
-    actions: FormikHelpers<NewUser>
-  ) => {
+  const handleSubmit = async (values: NewUser) => {
     try {
       setLoading(true)
       const { data } = await client.post('/auth/create', { ...values })
       navigation.navigate('Verification', { userInfo: data.user })
+      Notification.error('Profile created successfully!')
     } catch (error) {
-      console.log('bla bla: ', error)
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
     } finally {
       setLoading(false)
     }

@@ -9,6 +9,8 @@ import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
 import { AuthStackParamList } from '../../@types/navigation'
 import client from '../../api/client'
+import catchAsyncError from '../../api/catchError'
+import { Notification } from '../../utils/notification'
 
 interface InitialValue {
   email: string
@@ -33,13 +35,12 @@ const LostPassword: FC = () => {
   const handleSubmit = (values: InitialValue) => {
     try {
       setLoading(true)
-      console.log(loading)
       client.post('/auth/forget-password', {
         ...values,
       })
-      console.log('deu certo?')
     } catch (error) {
-      console.log('eeeeeeeeeeerrrorrrr: ', error)
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
     } finally {
       setLoading(false)
     }

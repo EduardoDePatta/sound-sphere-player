@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import colors from '../constants/colors'
 import * as DocumentPicker from 'expo-document-picker'
+import { Notification } from '../utils/notification'
 
 interface FileSelectorProps {
   icon: ReactNode
@@ -35,7 +36,7 @@ const FileSelector: FC<FileSelectorProps> = ({
       }
     } catch (error) {
       if (!(await DocumentPicker.getDocumentAsync()).canceled) {
-        console.log(error)
+        Notification.error(error as string)
       }
     }
   }

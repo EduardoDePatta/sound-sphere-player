@@ -10,6 +10,8 @@ import { StyleSheet, View } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import colors from '../constants/colors'
 import Loader from '../ui/Loader'
+import catchAsyncError from '../api/catchError'
+import { Notification } from '../utils/notification'
 
 interface indexProps {}
 
@@ -37,9 +39,9 @@ const AppNavigator: FC<indexProps> = () => {
         },
       })
       dispatch(updateProfile(data.profile))
-      console.log('🚀 ~ file: index.tsx:24 ~ fetchAuthInfo ~ data:', data)
     } catch (error) {
-      console.log('auth errorrrrrr bla bla: ', error)
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
     } finally {
       dispatch(updateLoadingState(false))
     }

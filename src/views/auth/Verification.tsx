@@ -9,6 +9,8 @@ import AppButton from '../../ui/AppButton'
 import { AuthStackParamList } from '../../@types/navigation'
 import client from '../../api/client'
 import colors from '../../constants/colors'
+import catchAsyncError from '../../api/catchError'
+import { Notification } from '../../utils/notification'
 
 type VerificationProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -59,22 +61,25 @@ const Verification: FC<VerificationProps> = ({ route }) => {
       setLoading(true)
       await client.post('/auth/re-verify-email', { userId: userInfo._id })
     } catch (error) {
-      console.log('error verif bla bla: ', error)
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
     } finally {
       setLoading(false)
     }
   }
 
   const handleSubmit = async () => {
-    if (!isValidOtp) return
+    if (!isValidOtp) return Notification.info('Invalid OTP!')
     try {
       const { data } = await client.post('/auth/verify-email', {
         userId: userInfo._id,
         token: otp.join(''),
       })
       navigation.navigate('SignIn')
+      Notification.success(data.message)
     } catch (error) {
-      console.log('verification error: ', error)
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
     }
   }
 

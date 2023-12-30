@@ -13,6 +13,8 @@ import { AuthStackParamList } from '../../@types/navigation'
 import client from '../../api/client'
 import { updateLoggedInState, updateProfile } from '../../store/auth'
 import { Keys, saveToAsyncStorage } from '../../storage/asyncStorage'
+import catchAsyncError from '../../api/catchError'
+import { Notification } from '../../utils/notification'
 
 interface SignInUserInfo {
   email: string
@@ -51,7 +53,8 @@ function SignIn() {
       dispatch(updateProfile(data.profile))
       dispatch(updateLoggedInState(true))
     } catch (error) {
-      console.log('bla bla: ', error)
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
     } finally {
       setLoading(false)
     }
