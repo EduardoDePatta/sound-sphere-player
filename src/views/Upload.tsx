@@ -14,6 +14,9 @@ import AppButton from '../ui/AppButton'
 import CategorySelector from '../components/CategorySelector'
 import { categories } from '../@types/categories'
 import { DocumentPickerAsset } from 'expo-document-picker'
+import * as yup from 'yup'
+import client from '../api/client'
+import { Keys, getFromAsyncStorage } from '../storage/asyncStorage'
 
 interface FormFields {
   title: string
@@ -29,14 +32,65 @@ const defaultForm: FormFields = {
   about: '',
 }
 
+const audioInfoSchema = yup.object().shape({
+  title: yup.string().trim().required('Title is missing!'),
+  category: yup.string().oneOf(categories, 'Category is missing!').required(),
+  about: yup.string().trim().required('About is missing!'),
+  file: yup.object().shape({
+    uri: yup.string().required('Audio File is missing!'),
+    size: yup.number().required('Audio File is missing!'),
+    name: yup.string().required('Audio File is missing!'),
+    mimeType: yup.string().required('Audio File is missing!'),
+  }),
+  poster: yup.object().shape({
+    uri: yup.string(),
+    size: yup.number(),
+    name: yup.string(),
+    mimeType: yup.string(),
+  }),
+})
+
 interface UploadProps {}
 
 const Upload: FC<UploadProps> = (props) => {
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const [audioInfo, setAudioInfo] = useState({ ...defaultForm })
 
-  const handleUpload = () => {
-    console.log(audioInfo)
+  const handleUpload = async () => {
+    try {
+      const finalData = await audioInfoSchema.validate(audioInfo)
+      const formData = new FormData()
+      formData.append('title', finalData.title)
+      formData.append('about', finalData.about)
+      formData.append('category', finalData.category)
+      formData.append('file', {
+        name: finalData.file.name,
+        type: finalData.file.mimeType,
+        uri: finalData.file.uri,
+      } as any)
+      if (finalData.poster.uri) {
+        formData.append('poster', {
+          name: finalData.poster.name,
+          type: finalData.poster.mimeType,
+          uri: finalData.poster.uri,
+        } as any)
+      }
+
+      const token = await getFromAsyncStorage(Keys.AUTH_TOKEN)
+      const { data } = await client.post('audio/create', formData, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      console.log(data)
+    } catch (error) {
+      if (error instanceof yup.ValidationError) {
+        console.log('validation error: ', error.message)
+      } else {
+        console.log(error)
+      }
+    }
   }
 
   return (
