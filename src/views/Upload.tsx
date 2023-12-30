@@ -13,20 +13,39 @@ import FileSelector from '../components/FileSelector'
 import AppButton from '../ui/AppButton'
 import CategorySelector from '../components/CategorySelector'
 import { categories } from '../@types/categories'
+import { DocumentPickerAsset } from 'expo-document-picker'
+
+interface FormFields {
+  title: string
+  category: string
+  about: string
+  file?: DocumentPickerAsset
+  poster?: DocumentPickerAsset
+}
+
+const defaultForm: FormFields = {
+  title: '',
+  category: '',
+  about: '',
+}
 
 interface UploadProps {}
 
 const Upload: FC<UploadProps> = (props) => {
   const [showCategoryModal, setShowCategoryModal] = useState(false)
-  const [audioInfo, setAudioInfo] = useState({
-    category: '',
-  })
+  const [audioInfo, setAudioInfo] = useState({ ...defaultForm })
+
+  const handleUpload = () => {
+    console.log(audioInfo)
+  }
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.fileSelectorContainer}>
         <FileSelector
           buttonTitle='Select Poster'
+          documentOptions={{ type: ['image/*'] }}
+          onSelect={(poster) => setAudioInfo({ ...audioInfo, poster })}
           icon={
             <MaterialCommunityIcons
               name='image-outline'
@@ -38,6 +57,8 @@ const Upload: FC<UploadProps> = (props) => {
         <FileSelector
           buttonTitle='Select Audio'
           style={{ marginLeft: 20 }}
+          documentOptions={{ type: ['audio/*'] }}
+          onSelect={(file) => setAudioInfo({ ...audioInfo, file })}
           icon={
             <MaterialCommunityIcons
               name='image-outline'
@@ -52,6 +73,9 @@ const Upload: FC<UploadProps> = (props) => {
           placeholderTextColor={colors.INACTIVE_CONTRAST}
           placeholder='Title'
           style={styles.input}
+          onChangeText={(text) => {
+            setAudioInfo({ ...audioInfo, title: text })
+          }}
         />
 
         <Pressable
@@ -66,6 +90,9 @@ const Upload: FC<UploadProps> = (props) => {
           placeholder='About'
           style={styles.input}
           multiline
+          onChangeText={(text) => {
+            setAudioInfo({ ...audioInfo, about: text })
+          }}
         />
         <CategorySelector
           data={categories}
@@ -78,11 +105,11 @@ const Upload: FC<UploadProps> = (props) => {
           }}
           visible={showCategoryModal}
           onSelect={(item) => {
-            setAudioInfo({ category: item })
+            setAudioInfo({ ...audioInfo, category: item })
           }}
         />
         <View style={{ marginBottom: 20 }} />
-        <AppButton title='Submit' borderRadius={7} />
+        <AppButton title='Submit' borderRadius={7} onPress={handleUpload} />
       </View>
     </ScrollView>
   )
@@ -104,7 +131,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     padding: 10,
     fontSize: 18,
-    color: colors.CONTRAST_2,
+    color: colors.CONTRAST,
     textAlignVertical: 'top',
   },
   category: {
