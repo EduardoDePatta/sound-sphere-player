@@ -3,11 +3,18 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { useFetchRecommendedAudios } from '../hooks/query'
 import colors from '../constants/colors'
 import GridView from '../ui/GridView'
+import { AudioData } from '../@types/audio'
 
-interface RecommendedAudiosProps {}
+interface RecommendedAudiosProps {
+  onAudioPress: (item: AudioData, data: AudioData[]) => void
+  onAudioLongPress: (item: AudioData, data: AudioData[]) => void
+}
 
-const RecommendedAudios: FC<RecommendedAudiosProps> = (props) => {
-  const { data, isLoading } = useFetchRecommendedAudios()
+const RecommendedAudios: FC<RecommendedAudiosProps> = ({
+  onAudioLongPress,
+  onAudioPress,
+}) => {
+  const { data = [], isLoading } = useFetchRecommendedAudios()
 
   const getPoster = (poster?: string) => {
     return poster ? { uri: poster } : require('../assets/sound-sphere-logo.png')
@@ -21,7 +28,10 @@ const RecommendedAudios: FC<RecommendedAudiosProps> = (props) => {
         col={3}
         renderItem={(item) => {
           return (
-            <Pressable>
+            <Pressable
+              onPress={() => onAudioPress(item, data)}
+              onLongPress={() => onAudioLongPress(item, data)}
+            >
               <Image style={styles.poster} source={getPoster(item.poster)} />
               <Text
                 ellipsizeMode='tail'

@@ -4,15 +4,18 @@ import { useFetchLatestAudios } from '../hooks/query'
 import Loader from '../ui/Loader'
 import colors from '../constants/colors'
 import AudioCard from '../ui/AudioCard'
+import { AudioData } from '../@types/audio'
 
-interface LatestUploadsProps {}
+interface LatestUploadsProps {
+  onAudioPress: (item: AudioData, data: AudioData[]) => void
+  onAudioLongPress: (item: AudioData, data: AudioData[]) => void
+}
 
-const LatestUploads: FC<LatestUploadsProps> = () => {
+const LatestUploads: FC<LatestUploadsProps> = ({
+  onAudioLongPress,
+  onAudioPress,
+}) => {
   const { data, isLoading } = useFetchLatestAudios()
-
-  const handlePress = () => {}
-
-  const handleLongPress = () => {}
 
   if (isLoading) {
     return <Loader loading={isLoading} />
@@ -28,8 +31,8 @@ const LatestUploads: FC<LatestUploadsProps> = () => {
               key={item.id}
               title={item.title}
               poster={item.poster}
-              handleLongPress={handleLongPress}
-              handlePress={handlePress}
+              handleLongPress={() => onAudioLongPress(item, data)}
+              handlePress={() => onAudioPress(item, data)}
             />
           )
         })}
