@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { StyleSheet, TextStyle, View } from 'react-native'
+import { TextStyle, View } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import colors from '../constants/colors'
 
