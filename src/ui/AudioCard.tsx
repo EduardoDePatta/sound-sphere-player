@@ -15,9 +15,7 @@ const AudioCard: FC<AudioCardProps> = ({
   handleLongPress,
   handlePress,
 }) => {
-  const source = poster
-    ? { uri: poster }
-    : require('../assets/sound-sphere-logo.png')
+  const source = poster ? { uri: poster } : require('../assets/music.png')
   return (
     <Pressable
       onPress={handlePress}

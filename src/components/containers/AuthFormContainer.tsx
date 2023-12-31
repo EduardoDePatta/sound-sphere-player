@@ -18,16 +18,6 @@ const AuthFormContainer: FC<AuthFormContainerProps> = ({
     <View style={styles.container}>
       <CirclesBackground />
       <View style={styles.headerContainer}>
-        {/* <Image
-          style={{
-            width: 170,
-            resizeMode: 'contain',
-            position: 'absolute',
-            top: -300,
-          }}
-          source={require('../../assets/sound-sphere-logo.png')}
-        /> */}
-        {/* <Text style={styles.logo}>SoundSphere</Text> */}
         <Text style={styles.heading}>{heading}</Text>
         <Text style={styles.subHeading}>{subHeading}</Text>
       </View>
