@@ -10,7 +10,7 @@ import PasswordVisibilityIcon from '../../ui/PasswordVisibilityIcon'
 import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
 import { AuthStackParamList } from '../../@types/navigation'
-import client from '../../api/client'
+import { getClient } from '../../api/client'
 import { updateLoggedInState, updateProfile } from '../../store/auth'
 import { Keys, saveToAsyncStorage } from '../../storage/asyncStorage'
 import catchAsyncError from '../../api/catchError'
@@ -48,6 +48,7 @@ function SignIn() {
   const handleSubmit = async (values: SignInUserInfo) => {
     try {
       setLoading(true)
+      const client = await getClient()
       const { data } = await client.post('/auth/sign-in', { ...values })
       await saveToAsyncStorage(Keys.AUTH_TOKEN, data.token)
       dispatch(updateProfile(data.profile))
