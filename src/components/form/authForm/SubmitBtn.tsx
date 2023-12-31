@@ -1,7 +1,7 @@
 import { useFormikContext } from 'formik'
 import { FC } from 'react'
 import { StyleSheet } from 'react-native'
-import AppButton from '../../ui/AppButton'
+import AppButton from '../../../ui/AppButton'
 
 interface SubmitBtnProps {
   title: string

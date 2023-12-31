@@ -9,8 +9,8 @@ import {
   ViewStyle,
 } from 'react-native'
 import { useFormikContext } from 'formik'
-import AppInput from '../../ui/AppInput'
-import colors from '../../constants/colors'
+import AppInput from '../../../ui/AppInput'
+import colors from '../../../constants/colors'
 
 interface AuthInputFieldProps {
   name: string
@@ -35,7 +35,8 @@ const AuthInputField: FC<AuthInputFieldProps> = ({
   rightIcon,
   onRightIconPress,
 }) => {
-  const { handleChange, values, errors, handleBlur, touched } = useFormikContext<{
+  const { handleChange, values, errors, handleBlur, touched } =
+    useFormikContext<{
       [key: string]: string
     }>()
 
