@@ -5,9 +5,7 @@ import AuthNavigator from './AuthNavigator'
 import { getAuthState, updateLoadingState, updateProfile } from '../store/auth'
 import TabNavigator from './TabNavigator'
 import { Keys, getFromAsyncStorage } from '../storage/asyncStorage'
-import client from '../api/client'
-import { StyleSheet, View } from 'react-native'
-import Spinner from 'react-native-loading-spinner-overlay'
+import { getClient } from '../api/client'
 import colors from '../constants/colors'
 import Loader from '../ui/Loader'
 import catchAsyncError from '../api/catchError'
@@ -33,11 +31,8 @@ const AppNavigator: FC<indexProps> = () => {
       dispatch(updateLoadingState(true))
       const token = await getFromAsyncStorage(Keys.AUTH_TOKEN)
       if (!token) return
-      const { data } = await client.get('/auth/is-auth', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const client = await getClient()
+      const { data } = await client.get('/auth/is-auth')
       dispatch(updateProfile(data.profile))
     } catch (error) {
       const errorMessage = catchAsyncError(error)
@@ -58,11 +53,5 @@ const AppNavigator: FC<indexProps> = () => {
     </NavigationContainer>
   )
 }
-
-const styles = StyleSheet.create({
-  spinnerTextStyle: {
-    color: colors.CONTRAST,
-  },
-})
 
 export default AppNavigator

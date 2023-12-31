@@ -10,10 +10,9 @@ import PasswordVisibilityIcon from '../../ui/PasswordVisibilityIcon'
 import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
 import { AuthStackParamList } from '../../@types/navigation'
-import client from '../../api/client'
 import { Notification } from '../../utils/notification'
-import { isAxiosError } from 'axios'
 import catchAsyncError from '../../api/catchError'
+import { getClient } from '../../api/client'
 
 interface NewUser {
   name: string
@@ -57,6 +56,7 @@ const SignUp: FC = () => {
   const handleSubmit = async (values: NewUser) => {
     try {
       setLoading(true)
+      const client = await getClient()
       const { data } = await client.post('/auth/create', { ...values })
       navigation.navigate('Verification', { userInfo: data.user })
       Notification.error('Profile created successfully!')

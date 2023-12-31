@@ -10,6 +10,7 @@ interface PlaylistModalProps {
   onRequestClose: () => void
   playlists: Playlist[]
   onCreateNewPress: () => void
+  onPlaylistPress: (playlist: Playlist) => void
 }
 
 interface ListItemProps {
@@ -33,6 +34,7 @@ const PlaylistModal: FC<PlaylistModalProps> = ({
   visible,
   playlists,
   onCreateNewPress,
+  onPlaylistPress,
 }) => {
   return (
     <BasicModalContainer visible={visible} onRequestClose={onRequestClose}>
@@ -40,6 +42,7 @@ const PlaylistModal: FC<PlaylistModalProps> = ({
         {playlists?.map((playlist) => {
           return (
             <ListItem
+              onPress={() => onPlaylistPress(playlist)}
               label={playlist.title}
               key={playlist.id}
               icon={

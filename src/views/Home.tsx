@@ -6,7 +6,7 @@ import OptionsModal from '../components/OptionsModal'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import colors from '../constants/colors'
 import { AudioData } from '../@types/audio'
-import client from '../api/client'
+import { getClient } from '../api/client'
 import { Keys, getFromAsyncStorage } from '../storage/asyncStorage'
 import catchAsyncError from '../api/catchError'
 import { Notification } from '../utils/notification'
@@ -14,6 +14,8 @@ import PlaylistModal from '../components/PlaylistModal'
 import PlaylistForm, {
   PlaylistInfo,
 } from '../components/form/playlistForm/PlaylistForm'
+import { useFetchPlaylist } from '../hooks/query'
+import { Playlist } from '../@types/playlist'
 interface HomeProps {}
 
 type Options = {
@@ -28,15 +30,13 @@ const Home: FC<HomeProps> = () => {
   const [showPlaylistForm, setShowPlaylistForm] = useState(false)
   const [selectedAudio, setSelectedAudio] = useState<AudioData>()
 
+  const { data } = useFetchPlaylist()
+
   const handleOnFavoritePress = async () => {
     if (!selectedAudio) return
     try {
-      const token = `Bearer ${await getFromAsyncStorage(Keys.AUTH_TOKEN)}`
-      await client.post(`/favorite?audioId=${selectedAudio.id}`, null, {
-        headers: {
-          Authorization: token,
-        },
-      })
+      const client = await getClient()
+      await client.post(`/favorite?audioId=${selectedAudio.id}`)
       Notification.success('Audio successfully added to favorites!')
     } catch (error) {
       const errorMessage = catchAsyncError(error)
@@ -73,26 +73,36 @@ const Home: FC<HomeProps> = () => {
   const handlePlaylistSubmit = async (value: PlaylistInfo) => {
     if (!value.title.trim()) return
     try {
-      const token = `Bearer ${await getFromAsyncStorage(Keys.AUTH_TOKEN)}`
-      await client.post(
-        '/playlist/create',
-        {
-          resId: selectedAudio?.id,
-          title: value.title,
-          visibility: value.private ? 'private' : 'public',
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
+      const client = await getClient()
+      await client.post('/playlist/create', {
+        resId: selectedAudio?.id,
+        title: value.title,
+        visibility: value.private ? 'private' : 'public',
+      })
       Notification.success('Playlist created Successfully!')
     } catch (error) {
       const errorMessage = catchAsyncError(error)
       Notification.error(errorMessage)
     } finally {
       setShowPlaylistForm(false)
+    }
+  }
+
+  const updatePlaylist = async (playlist: Playlist) => {
+    try {
+      const client = await getClient()
+      const { data } = await client.patch('/playlist', {
+        id: playlist.id,
+        item: selectedAudio?.id,
+        title: playlist.title,
+        visibility: playlist.visibility,
+      })
+      setSelectedAudio(undefined)
+      setShowPlaylistModal(false)
+      Notification.success(`New audio added to ${data.playlist.title}`)
+    } catch (error) {
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
     }
   }
 
@@ -136,7 +146,8 @@ const Home: FC<HomeProps> = () => {
           setShowPlaylistModal(false)
           setShowPlaylistForm(true)
         }}
-        playlists={[]}
+        onPlaylistPress={updatePlaylist}
+        playlists={data ?? []}
       />
       <PlaylistForm
         visible={showPlaylistForm}

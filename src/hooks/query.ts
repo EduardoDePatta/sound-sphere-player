@@ -1,11 +1,13 @@
 import { useQuery } from 'react-query'
 import { Notification } from '../utils/notification'
-import client from '../api/client'
+import { getClient } from '../api/client'
 import catchAsyncError from '../api/catchError'
 import { AudioData } from '../@types/audio'
 import { Keys, getFromAsyncStorage } from '../storage/asyncStorage'
+import { Playlist } from '../@types/playlist'
 
 const fetchLatest = async (): Promise<AudioData[]> => {
+  const client = await getClient()
   const { data } = await client('/audio/latest')
   return data.audios
 }
@@ -21,13 +23,35 @@ export const useFetchLatestAudios = () => {
 }
 
 const fetchRecommended = async (): Promise<AudioData[]> => {
+  const client = await getClient()
   const { data } = await client('/profile/recommended')
   return data.audios
 }
 
 export const useFetchRecommendedAudios = () => {
   return useQuery(['recommended'], {
-    queryFn: () => fetchLatest(),
+    queryFn: () => fetchRecommended(),
+    onError(error) {
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
+    },
+  })
+}
+
+const fetchPlaylist = async (): Promise<Playlist[]> => {
+  const token = `Bearer ${await getFromAsyncStorage(Keys.AUTH_TOKEN)}`
+  const client = await getClient()
+  const { data } = await client('/playlist/by-profile', {
+    headers: {
+      Authorization: token,
+    },
+  })
+  return data.playlist
+}
+
+export const useFetchPlaylist = () => {
+  return useQuery(['playlist'], {
+    queryFn: () => fetchPlaylist(),
     onError(error) {
       const errorMessage = catchAsyncError(error)
       Notification.error(errorMessage)

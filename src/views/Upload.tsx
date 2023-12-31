@@ -15,11 +15,10 @@ import CategorySelector from '../components/CategorySelector'
 import { categories } from '../@types/categories'
 import { DocumentPickerAsset } from 'expo-document-picker'
 import * as yup from 'yup'
-import client from '../api/client'
+import { getClient } from '../api/client'
 import { Keys, getFromAsyncStorage } from '../storage/asyncStorage'
 import Progress from '../ui/Progress'
 import { mapRange } from '../utils/math'
-import Toast from 'react-native-toast-message'
 import { Notification } from '../utils/notification'
 
 interface FormFields {
@@ -86,11 +85,8 @@ const Upload: FC<UploadProps> = (props) => {
       }
 
       const token = await getFromAsyncStorage(Keys.AUTH_TOKEN)
-      const { data } = await client.post('audio/create', formData, {
-        headers: {
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'multipart/form-data',
-        },
+      const client = await getClient({ 'Content-Type': 'multipart/form-data' })
+      await client.post('audio/create', formData, {
         onUploadProgress(progressEvent) {
           const uploaded = mapRange({
             inputMin: 0,
