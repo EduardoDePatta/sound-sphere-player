@@ -1,19 +1,28 @@
 import { FC } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import { useFetchUploadsByProfile } from '../../hooks/query'
 import AudioListItem from '../../ui/AudioListItem'
+import EmptyRecord from '../../ui/EmptyRecord'
 
 interface UploadTabProps {}
 
-const UploadsTab: FC<UploadTabProps> = (props) => {
-  const { data } = useFetchUploadsByProfile()
+const UploadsTab: FC<UploadTabProps> = () => {
+  const { data, isLoading } = useFetchUploadsByProfile()
+
+  if (!data?.length) {
+    return <EmptyRecord title='there is no audio' />
+  }
 
   return (
-    <View style={styles.container}>
-      {data?.map((audio) => {
-        return <AudioListItem audio={audio} />
-      })}
-    </View>
+    <>
+      <ScrollView style={styles.container}>
+        {data?.map((audio) => {
+          return (
+            <AudioListItem key={audio.id} audio={audio} loading={isLoading} />
+          )
+        })}
+      </ScrollView>
+    </>
   )
 }
 
