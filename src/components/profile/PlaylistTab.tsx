@@ -1,13 +1,18 @@
 import { FC } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
+import { useFetchPlaylist } from '../../hooks/query'
+import PlaylistItem from '../../ui/PlaylistItem'
 
 interface PlaylistTabProps {}
 
 const PlaylistTab: FC<PlaylistTabProps> = (props) => {
+  const { data, isLoading } = useFetchPlaylist()
   return (
-    <View style={styles.container}>
-      <Text>PlaylistTab</Text>
-    </View>
+    <ScrollView style={styles.container}>
+      {data?.map((playlist) => {
+        return <PlaylistItem playlist={playlist} key={playlist.id} />
+      })}
+    </ScrollView>
   )
 }
 
