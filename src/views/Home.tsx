@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import LatestUploads from '../components/LatestUploads'
 import RecommendedAudios from '../components/RecommendedAudios'
@@ -7,7 +7,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import colors from '../constants/colors'
 import { AudioData } from '../@types/audio'
 import { getClient } from '../api/client'
-import { Keys, getFromAsyncStorage } from '../storage/asyncStorage'
 import catchAsyncError from '../api/catchError'
 import { Notification } from '../utils/notification'
 import PlaylistModal from '../components/PlaylistModal'
@@ -16,6 +15,9 @@ import PlaylistForm, {
 } from '../components/form/playlistForm/PlaylistForm'
 import { useFetchPlaylist } from '../hooks/query'
 import { Playlist } from '../@types/playlist'
+import { Audio } from 'expo-av'
+import { useDispatch } from 'react-redux'
+
 interface HomeProps {}
 
 type Options = {
@@ -28,7 +30,9 @@ const Home: FC<HomeProps> = () => {
   const [showOptions, setShowOptions] = useState(false)
   const [showPlaylistModal, setShowPlaylistModal] = useState(false)
   const [showPlaylistForm, setShowPlaylistForm] = useState(false)
+  const [sound, setSound] = useState<Audio.Sound>()
   const [selectedAudio, setSelectedAudio] = useState<AudioData>()
+  const dispatch = useDispatch()
 
   const { data } = useFetchPlaylist()
 
@@ -106,16 +110,40 @@ const Home: FC<HomeProps> = () => {
     }
   }
 
+  const handlePlayMusic = async (audio: AudioData) => {
+    try {
+      const { sound } = await Audio.Sound.createAsync({
+        name: audio.title,
+        uri: audio.file,
+      })
+      await sound.setStatusAsync({ shouldPlay: true })
+      setSound(sound)
+    } catch (error) {
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
+    }
+  }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync()
+        }
+      : undefined
+  }, [sound])
+
   return (
     <View style={styles.container}>
       <LatestUploads
-        onAudioPress={(item) => {
+        onAudioPress={(item, data) => {
+          handlePlayMusic(item)
           console.log(item)
         }}
         onAudioLongPress={(item) => handleOnLongPress(item)}
       />
       <RecommendedAudios
         onAudioPress={(item) => {
+          handlePlayMusic(item)
           console.log(item)
         }}
         onAudioLongPress={(item) => handleOnLongPress(item)}
