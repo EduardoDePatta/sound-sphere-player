@@ -6,16 +6,25 @@ import AppLink from '../../ui/AppLink'
 import AuthFormContainer from '../../components/containers/AuthFormContainer'
 import OTPField from '../../ui/OTPField'
 import AppButton from '../../ui/AppButton'
-import { AuthStackParamList } from '../../@types/navigation'
-import client from '../../api/client'
+import {
+  AuthStackParamList,
+  ProfileNavigatorStackParamList,
+} from '../../@types/navigation'
+import { getClient } from '../../api/client'
 import colors from '../../constants/colors'
 import catchAsyncError from '../../api/catchError'
 import { Notification } from '../../utils/notification'
+import ReVerificationLink from '../../components/ReVerificationLink'
 
 type VerificationProps = NativeStackScreenProps<
-  AuthStackParamList,
+  AuthStackParamList | ProfileNavigatorStackParamList,
   'Verification'
 >
+
+type PossibleScreens = {
+  ProfileSettings: undefined
+  SignIn: undefined
+}
 
 const otpFields = new Array(6).fill('')
 
@@ -24,10 +33,8 @@ const Verification: FC<VerificationProps> = ({ route }) => {
   const [otp, setOtp] = useState([...otpFields])
   const [activeOtpIndex, setActiveOtpIndex] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [countDown, setCountDown] = useState(60)
-  const [canSendOTPRequest, setCanSendOTPRequest] = useState(false)
   const inputRef = useRef<TextInput>(null)
-  const navigation = useNavigation<NavigationProp<AuthStackParamList>>()
+  const navigation = useNavigation<NavigationProp<PossibleScreens>>()
 
   const handleChange = (value: string, index: number) => {
     const newOtp = [...otp]
@@ -54,29 +61,22 @@ const Verification: FC<VerificationProps> = ({ route }) => {
     return value.trim()
   })
 
-  const requestForOTP = async () => {
-    setCountDown(60)
-    setCanSendOTPRequest(false)
-    try {
-      setLoading(true)
-      await client.post('/auth/re-verify-email', { userId: userInfo._id })
-    } catch (error) {
-      const errorMessage = catchAsyncError(error)
-      Notification.error(errorMessage)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleSubmit = async () => {
     if (!isValidOtp) return Notification.info('Invalid OTP!')
     try {
+      const client = await getClient()
       const { data } = await client.post('/auth/verify-email', {
         userId: userInfo._id,
         token: otp.join(''),
       })
-      navigation.navigate('SignIn')
       Notification.success(data.message)
+      const { routeNames } = navigation.getState()
+      if (routeNames.includes('SignIn')) {
+        navigation.navigate('SignIn')
+      }
+      if (routeNames.includes('ProfileSettings')) {
+        navigation.navigate('ProfileSettings')
+      }
     } catch (error) {
       const errorMessage = catchAsyncError(error)
       Notification.error(errorMessage)
@@ -86,22 +86,6 @@ const Verification: FC<VerificationProps> = ({ route }) => {
   useEffect(() => {
     inputRef.current?.focus()
   }, [activeOtpIndex])
-
-  useEffect(() => {
-    if (canSendOTPRequest) return
-    const intervalId = setInterval(() => {
-      setCountDown((oldCountDown) => {
-        if (oldCountDown <= 0) {
-          setCanSendOTPRequest(true)
-          clearInterval(intervalId)
-          return 0
-        }
-        return oldCountDown - 1
-      })
-    }, 1000)
-
-    return () => clearInterval(intervalId)
-  }, [canSendOTPRequest])
 
   return (
     <AuthFormContainer heading='Please look at your email.'>
@@ -124,14 +108,7 @@ const Verification: FC<VerificationProps> = ({ route }) => {
       </View>
       <AppButton loading={loading} title='Submit' onPress={handleSubmit} />
       <View style={styles.linkContainer}>
-        {countDown > 0 ? (
-          <Text style={styles.countDown}>{countDown} sec</Text>
-        ) : null}
-        <AppLink
-          active={canSendOTPRequest}
-          title='Re-send OTP'
-          onPress={requestForOTP}
-        />
+        <ReVerificationLink linkTitle='Re-send OTP' userId={userInfo._id} />
       </View>
     </AuthFormContainer>
   )
@@ -152,7 +129,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: '100%',
     justifyContent: 'flex-end',
-    flexDirection: 'row',
   },
   countDown: {
     color: colors.SECONDARY,
