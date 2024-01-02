@@ -3,7 +3,6 @@ import { Notification } from '../utils/notification'
 import { getClient } from '../api/client'
 import catchAsyncError from '../api/catchError'
 import { AudioData } from '../@types/audio'
-import { Keys, getFromAsyncStorage } from '../storage/asyncStorage'
 import { Playlist } from '../@types/playlist'
 
 const fetchLatest = async (): Promise<AudioData[]> => {
@@ -63,6 +62,22 @@ const fetchUploadsByProfile = async (): Promise<AudioData[]> => {
 export const useFetchUploadsByProfile = () => {
   return useQuery(['uploads-by-profile'], {
     queryFn: () => fetchUploadsByProfile(),
+    onError(error) {
+      const errorMessage = catchAsyncError(error)
+      Notification.error(errorMessage)
+    },
+  })
+}
+
+const fetchFavorites = async (): Promise<AudioData[]> => {
+  const client = await getClient()
+  const { data } = await client('/favorite')
+  return data.audios
+}
+
+export const useFetchFavorites = () => {
+  return useQuery(['favorites'], {
+    queryFn: () => fetchFavorites(),
     onError(error) {
       const errorMessage = catchAsyncError(error)
       Notification.error(errorMessage)
