@@ -5,6 +5,7 @@ import Profile from '../views/Profile'
 import Upload from '../views/Upload'
 import colors from '../constants/colors'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
+import ProfileNavigator from './ProfileNavigator'
 
 const Tab = createBottomTabNavigator()
 
@@ -27,8 +28,8 @@ function TabNavigator() {
         }}
       />
       <Tab.Screen
-        name='ProfileScreen'
-        component={Profile}
+        name='ProfileNavigator'
+        component={ProfileNavigator}
         options={{
           tabBarIcon: ({ size, color }) => {
             return <AntDesign name='user' size={size} color={color} />
