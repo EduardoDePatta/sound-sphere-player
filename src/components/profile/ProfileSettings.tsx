@@ -25,6 +25,7 @@ import {
 } from '../../store/auth'
 import * as ImagePicker from 'expo-image-picker'
 import { getPermissionToReadImages } from '../../utils/helper'
+import ReVerificationLink from '../ReVerificationLink'
 
 interface ProfileSettingsProps {}
 
@@ -136,7 +137,11 @@ const ProfileSettings: FC<ProfileSettingsProps> = () => {
         />
         <View style={styles.emailContainer}>
           <Text style={styles.email}>{profile?.email}</Text>
-          <MaterialIcons name='verified' size={15} color={colors.SECONDARY} />
+          {profile?.verified ? (
+            <MaterialIcons name='verified' size={15} color={colors.SECONDARY} />
+          ) : (
+            <ReVerificationLink linkTitle='verify' activeAtFirst />
+          )}
         </View>
       </View>
 
