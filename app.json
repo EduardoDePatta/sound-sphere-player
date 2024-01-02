@@ -29,7 +29,8 @@
     "plugins": [
       "expo-router",
       "expo-build-properties",
-      "expo-document-picker"
+      "expo-document-picker",
+      "expo-image-picker"
     ]
   }
 }
