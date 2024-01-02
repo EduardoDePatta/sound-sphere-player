@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { UserProfile } from '../../store/auth'
 import AvatarField from '../../ui/AvatarField'
 import colors from '../../constants/colors'
-import { MaterialIcons, AntDesign } from '@expo/vector-icons'
+import { MaterialIcons, AntDesign, Octicons } from '@expo/vector-icons'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { ProfileNavigatorStackParamList } from '../../@types/navigation'
 
@@ -24,7 +24,11 @@ const ProfileContainer: FC<ProfileContainerProps> = ({ profile }) => {
         <Text style={styles.profileName}>{profile.name}</Text>
         <View style={styles.flexRow}>
           <Text style={styles.email}>{profile.email}</Text>
-          <MaterialIcons name='verified' size={15} color={colors.SECONDARY} />
+          {profile.verified ? (
+            <MaterialIcons name='verified' size={15} color={colors.SECONDARY} />
+          ) : (
+            <Octicons name='unverified' size={15} color={colors.SECONDARY} />
+          )}
         </View>
         <View style={styles.flexRow}>
           <Text style={styles.profileActionLink}>
