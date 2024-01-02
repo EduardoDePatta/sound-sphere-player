@@ -8,7 +8,6 @@ interface FavoriteTabProps {}
 
 const FavoriteTab: FC<FavoriteTabProps> = (props) => {
   const { data, isLoading } = useFetchFavorites()
-  console.log('🚀 ~ file: FavoriteTab.tsx:9 ~ data:', data)
 
   if (!data?.length) {
     return <EmptyRecord title='There is no favorited audio' />
