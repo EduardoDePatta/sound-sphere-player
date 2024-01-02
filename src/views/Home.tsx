@@ -16,7 +16,6 @@ import PlaylistForm, {
 import { useFetchPlaylist } from '../hooks/query'
 import { Playlist } from '../@types/playlist'
 import { Audio } from 'expo-av'
-import { useDispatch } from 'react-redux'
 
 interface HomeProps {}
 
@@ -32,7 +31,6 @@ const Home: FC<HomeProps> = () => {
   const [showPlaylistForm, setShowPlaylistForm] = useState(false)
   const [sound, setSound] = useState<Audio.Sound>()
   const [selectedAudio, setSelectedAudio] = useState<AudioData>()
-  const dispatch = useDispatch()
 
   const { data } = useFetchPlaylist()
 
