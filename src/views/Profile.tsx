@@ -6,14 +6,19 @@ import PlaylistTab from '../components/profile/PlaylistTab'
 import FavoriteTab from '../components/profile/FavoriteTab'
 import HistoryTab from '../components/profile/HistoryTab'
 import colors from '../constants/colors'
+import ProfileContainer from '../components/containers/ProfileContainer'
+import { useSelector } from 'react-redux'
+import { getAuthState } from '../store/auth'
 
 interface ProfileProps {}
 
 const Tab = createMaterialTopTabNavigator()
 
-const Profile: FC<ProfileProps> = (props) => {
+const Profile: FC<ProfileProps> = () => {
+  const { profile } = useSelector(getAuthState)
   return (
     <View style={styles.container}>
+      <ProfileContainer profile={profile} />
       <Tab.Navigator
         screenOptions={{
           tabBarStyle: styles.tabBarStyle,
